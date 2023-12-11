@@ -10,6 +10,10 @@ metaheuristics experiments on super mario bros
 - Load Rom (e.g. SMB USA rom)
 - Try to run one of Lua example example scripts
 
+### Extra setup steps
+
+- Add `fceux` to the `PATH` in order to run it directly. For command line options see <https://fceux.com/web/help/CommandLineOptions.html>
+
 ## Resources
 
 - FCEUX lua scripting <https://fceux.com/web/help/LuaScripting.html>
