@@ -13,6 +13,7 @@ metaheuristics experiments on super mario bros
 ### Extra setup steps
 
 - Add `fceux` to the `PATH` in order to run it directly. For command line options see <https://fceux.com/web/help/CommandLineOptions.html>
+- Install `lua` (e.g. <https://github.com/rjpcomputing/luaforwindows/releases>)
 
 ## Resources
 
