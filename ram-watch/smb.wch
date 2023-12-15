@@ -1,7 +1,13 @@
 
-5
-00000	0000	S	S	0	position
-00001	0086	b	u	0	
-00002	006D	b	u	0	
-00003	00B5	b	u	0	
-00004	00CE	b	u	0	
+11
+00000	0000	S	S	0	vertical
+00001	00CE	b	u	0	vertical position
+00002	00B5	b	u	0	vertical screen position
+00003	0000	S	S	0	horizontal
+00004	0086	b	u	0	horizontal position
+00005	006D	b	u	0	horizontal screen position
+00006	03AD	b	u	0	not sure pos x 1
+00007	071D	b	u	0	not sure posx 2
+00008	0000	S	S	0	playerstate
+00009	000E	b	u	0	player state
+0000A	0712	b	u	0	death music

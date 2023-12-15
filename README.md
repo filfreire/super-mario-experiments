@@ -21,7 +21,12 @@ metaheuristics experiments on super mario bros
 - Super Mario Bros RAM map <https://datacrystal.romhacking.net/wiki/Super_Mario_Bros.:RAM_map>
 - <https://github.com/NesHacker/PlatformerMovement/>
 - <https://www.youtube.com/watch?v=ZuKIUjw_tNU>
+- <https://github.com/mam91/Neat-Genetic-Mario>
 
 ## Other sources
 
 > Leane, M., & Noman, N. (2017, November). An evolutionary metaheuristic algorithm to optimise solutions to NES games. In 2017 21st Asia Pacific Symposium on Intelligent and Evolutionary Systems (IES) (pp. 19-24). IEEE.
+>
+> Aloupis, G., Demaine, E. D., Guo, A., & Viglietta, G. (2015). Classic Nintendo games are (computationally) hard. Theoretical Computer Science, 586, 135-160.
+>
+> Gabrielsen, C. (2012). Video Game Motion Planning reviewed NP-complete.
