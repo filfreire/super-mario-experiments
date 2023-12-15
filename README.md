@@ -6,14 +6,15 @@ metaheuristics experiments on super mario bros
 
 > Note: tested using Windows 10 Pro 22H2
 
-- Install [FCEUX](https://github.com/TASEmulators/fceux)
+- Install [FCEUX](https://github.com/TASEmulators/fceux) (tested with win32 version)
 - Load Rom (e.g. SMB USA rom)
-- Try to run one of Lua example example scripts
+- Try to run one of the example-scripts on fceux, alternatively run `./example-run.ps1` powershell script.
 
 ### Extra setup steps
 
 - Add `fceux` to the `PATH` in order to run it directly. For command line options see <https://fceux.com/web/help/CommandLineOptions.html>
 - Install `lua` (e.g. <https://github.com/rjpcomputing/luaforwindows/releases>)
+- Copy `iuplua51.dll` and `lfs.dll` from your Lua install directory into root of `fceux` installation directory
 
 ## Resources
 

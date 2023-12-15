@@ -22,7 +22,6 @@ function debugMarioPosition()
     emu.print("Mario position total: " .. (marioHorinzontalPosition + (256 *  marioHorinzontalMultiplier))  .. ", " .. (marioVerticalPosition + (256 *  marioVerticalMultiplier)))
     -- emu.print("Mario position: " .. marioHorinzontalPosition .. ", " .. marioVerticalPosition .. ", " .. marioHorinzontalMultiplier .. ", " .. marioVerticalMultiplier)
     emu.print("Player state/playing death music: " .. playerState .. ", " .. playingDeathMusic)
-
 end
 
 -- function that given a motif, executes it for a given number of frames
@@ -40,15 +39,14 @@ local motif2 = {right = true, A = true, B = false}
 local motif3 = {right = true, A = false, B = true}
 local motif4 = {right = true, A = false, B = false}
 
+print(os.getenv("foo"))
+
 -- main loop
 while true do
-
-    -- print mario position
     debugMarioPosition()
-
     executeMotif(motif1, 10)
     executeMotif(motif2, 10)
     executeMotif(motif3, 10)
     executeMotif(motif4, 10)
-
+    emu.frameadvance()
 end
