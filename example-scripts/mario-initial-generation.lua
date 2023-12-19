@@ -107,16 +107,22 @@ function createSolution(length)
 end
 
 -- Function to execute a solution
-function executeSolution(solution, goalXPosition)
+function executeSolution(solution, goalXPosition, currentPosition)
+    local lastPosition = getCurrentMarioPosition()
     emu.print("Executing solution: " .. table.concat(solution, ", "))
     for i, motifKey in ipairs(solution) do
         executeMotif(motifs[motifKey], 10) -- Execute the motif
+        local currentPosition = getCurrentMarioPosition()
+        -- emu.print("Current position: " .. currentPosition)
 
         if checkIfFailState() then
             return "fail", i -- Return fail status and the index of the failing motif
+        elseif lastPosition == currentPosition then
+            return "stuck", i -- Return fail status and the index of the failing motif
         elseif checkIfWinState(goalXPosition) then
             return "win", nil -- Return win status
         end
+        lastPosition = currentPosition
     end
     return "fail", nil -- Return fail status and nil as the index of the failing motif
 end
@@ -149,10 +155,9 @@ repeat
         savestate.load(initialSave)
         -- Increase the length of the solution if the end of the motifKeys list is reached
         if failIndex == nil then
-            -- check if current position is same as last,  if yes increase stuckCounter
+            emu.print("FAIL!")
             table.insert(solution, motifKeys[1])
             n = #solution -- Update the length of the solution
-            emu.print("Fail state reached with current solution, appending top-ranked motif and trying again")
         else
             -- Find the index of the failing motif in the motifKeys list
             local currentMotifIndex = findMotifIndex(solution[failIndex])
@@ -167,6 +172,27 @@ repeat
                 solution = createSolution(n)
             end
         end
+    elseif status == "stuck" then
+        emu.print("STUCK!")
+
+        if failIndex == nil then
+            table.insert(solution, motifKeys[1])
+            n = #solution -- Update the length of the solution
+        else
+            -- Find the index of the failing motif in the motifKeys list
+            local currentMotifIndex = findMotifIndex(solution[failIndex])
+
+            -- Replace failing motif with the next in the hierarchy
+            local nextMotifIndex = (currentMotifIndex % #motifKeys) + 1
+            solution[failIndex] = motifKeys[nextMotifIndex]
+
+            -- Increase the length of the solution if the end of the motifKeys list is reached
+            if nextMotifIndex == 1 then
+                n = n + 1
+                solution = createSolution(n)
+            end
+        end
+
     elseif status == "win" then
         emu.print("Win state achieved with current solution!")
         appendSolutionToFile(solution)
@@ -176,18 +202,3 @@ until status == "win"
 
 
 -- At this point, solution should be feasible
-
-
--- main loop
--- while true do
---     debugMarioPosition()
---     executeMotif(motifs["right"], 10)
---     executeMotif(motifs["rightA"], 10)
---     executeMotif(motifs["rightAB"], 10)
--- executeMotif(motifs["rightB"], 10)
--- executeMotif(motifs["left"], 10)
--- executeMotif(motifs["leftA"], 10)
--- executeMotif(motifs["leftAB"], 10)
--- executeMotif(motifs["leftB"], 10)
-
--- end
