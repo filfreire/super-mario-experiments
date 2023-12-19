@@ -13,7 +13,8 @@ local farthestPosition = 0
 local motifs = require("motifs")
 local motifKeys = {"right", "rightA", "rightB", "rightAB", "left", "leftA", "leftB", "leftAB"}
 -- local frameDurations = {10, 20, 30}
-local frameDurations = {10, 20}
+local frameDurations = {10, 15, 20, 25, 30}
+
 
 
 
