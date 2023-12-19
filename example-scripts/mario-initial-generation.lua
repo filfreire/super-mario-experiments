@@ -12,7 +12,8 @@ local farthestPosition = 0
 
 local motifs = require("motifs")
 local motifKeys = {"right", "rightA", "rightB", "rightAB", "left", "leftA", "leftB", "leftAB"}
-local frameDurations = {10, 20, 25, 30}
+local frameDurations = {10, 20, 30}
+
 
 local initialSave = savestate.create(5)
 print(os.getenv("foo"))
@@ -36,7 +37,8 @@ function checkIfFailState()
     -- playingDeathMusic 1 is when falling into a hole and dying
 
     if playerState == 6 or playerState == 11 or playingDeathMusic == 1 then
-        emu.print("Fail state detected!")
+-- emu.print("Fail state detected!")
+
         if (playingDeathMusic == 1) then
             isFallIntoPit = true
         end
@@ -48,7 +50,8 @@ end
 
 function checkIfWinState(goalXPosition, currentXPosition)
     if currentXPosition >= goalXPosition then
-        emu.print("Win state detected!")
+-- emu.print("Win state detected!")
+
         return true
     end
     return false
@@ -70,7 +73,8 @@ end
 -- Function to execute a solution
 function executeSolution(solution, goalXPosition)
     local lastPosition = tools.getCurrentMarioPosition()
-    emu.print("Executing solution: " .. tools.solutionToString(solution))
+-- emu.print("Executing solution: " .. tools.solutionToString(solution))
+
     for i, motifData in ipairs(solution) do
 
         executeMotif(motifs[motifData.motif], motifData.duration) -- Execute the motif with the specified duration
@@ -87,11 +91,11 @@ function executeSolution(solution, goalXPosition)
 
         if failState then
             failingMotifIndex = i - 1
-            -- if (isFallIntoPit) then
-            --    failingMotifIndex = i - 1 -- Return previous motif if Mario fell into a pit
-            -- elseif (currentPositionX == lastPosition) then
-            --     failingMotifIndex = i - 1 -- Return the previous motif if Mario died via an enemy and is stuck
-            -- end
+            if (isFallIntoPit) then
+                failingMotifIndex = i - 1 -- Return previous motif if Mario fell into a pit
+            elseif (currentPositionX == lastPosition) then
+                failingMotifIndex = i - 1 -- Return the previous motif if Mario died via an enemy and is stuck
+            end
             return "fail", failingMotifIndex -- Return fail status and the index of the failing motif
         elseif lastPosition == currentPositionX then
             return "stuck", i -- Return stuck status and the index of the motif where Mario got stuck
