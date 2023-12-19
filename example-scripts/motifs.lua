@@ -11,6 +11,8 @@ local motifs = {}
 -- left B
 -- left A B
 
+
+
 motifs["right"] = {
     up = false,
     down = false,

@@ -33,7 +33,8 @@ function executeMotif(motif, frames)
     -- emu.print("Executed motif: " .. tostring(motif) .. " for " .. frames .. " frames")
 end
 
--- L1.1 ending coordinates X 89*12 = 1068
+-- L1.1 ending coordinates X 89 + (12*256) = 1068
+
 local motif1 = {right = true, A = true, B = true}
 local motif2 = {right = true, A = true, B = false}
 local motif3 = {right = true, A = false, B = true}
