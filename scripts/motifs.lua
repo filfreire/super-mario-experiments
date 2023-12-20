@@ -11,6 +11,8 @@ local motifs = {}
 -- left B
 -- left A B
 
+local motifKeys = {"right", "rightA", "rightB", "rightAB", "left", "leftA", "leftB", "leftAB"}
+
 
 
 motifs["right"] = {
@@ -85,4 +87,8 @@ motifs["leftAB"] = {
     B = true
 }
 
-return motifs
+return {
+    motifs = motifs,
+    motifKeys = motifKeys
+}
+
