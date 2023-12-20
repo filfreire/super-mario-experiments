@@ -7,7 +7,8 @@ local farthestPosition = 0
 local bestSolutionYet = nil
 local finalSolution = nil
 local m = require("motifs")
-local frameDurations = {10, 20}
+local frameDurations = {10, 20, 25, 30}
+
 local n = 5 -- Starting length of the solution
 local goalXPosition = 3161 -- win position
 
@@ -21,7 +22,7 @@ function createSolution(length)
     local solution = {}
     for i = 1, length do
         table.insert(solution, {
-            motif = motifKeys[1],
+            motif = m.motifKeys[1],
             duration = frameDurations[1]
         })
     end
