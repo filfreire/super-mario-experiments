@@ -9,7 +9,7 @@ metaheuristics experiments on super mario bros
 - Install [FCEUX](https://github.com/TASEmulators/fceux) (tested with win32 version)
 - Load Rom (e.g. SMB USA rom)
 - Try to run one of the `scripts` on fceux, alternatively run
-  - `./generate-initial-solution.ps1` powershell for generating a feasible starting solution
+  - `.\generate-initial-solution.ps1` powershell for generating a feasible starting solution
   - `.\playback-solution.ps1 .\data\solutions1.txt` to try out a saved solution
 
 ### Extra setup steps
@@ -33,3 +33,7 @@ metaheuristics experiments on super mario bros
 > Aloupis, G., Demaine, E. D., Guo, A., & Viglietta, G. (2015). Classic Nintendo games are (computationally) hard. Theoretical Computer Science, 586, 135-160.
 >
 > Gabrielsen, C. (2012). Video Game Motion Planning reviewed NP-complete.
+>
+> Pelikan, M., & Goldberg, D. E. (2010). Genetic algorithms. MEDAL Report, (2010007), 1-28.
+>
+> Lobo, F. G., & Lima, C. F. (2007). Adaptive population sizing schemes in genetic algorithms. In Parameter setting in evolutionary algorithms (pp. 185-204). Berlin, Heidelberg: Springer Berlin Heidelberg.

@@ -1,5 +1,5 @@
 # Created by Filipe Freire, 2023
-# This script generates an feasible initial solution for the SMB game
+# This script replays a solution for the SMB game
 
 $scriptPath = $PSScriptRoot
 $fullLuaScriptPath = Join-Path -Path $scriptPath -ChildPath "\scripts\mario-playback-solution.lua"

@@ -9,6 +9,7 @@ local finalSolution = nil
 local m = require("motifs")
 local frameDurations = {10, 20, 25, 30}
 
+-- TODO: make this a env variable / parameter
 local n = 5 -- Starting length of the solution
 local goalXPosition = 3161 -- win position
 
@@ -51,7 +52,6 @@ repeat
 
         if failIndex then
             local currentMotifData = solution[failIndex]
-            -- emu.print("Fail state, index:" .. failIndex .. ", solutionsize: " .. #solution .." achieved with current solution: " .. tools.solutionToString(solution))
             local currentMotifIndex = tools.findInTable(m.motifKeys, currentMotifData.motif)
             local currentFrameDurationIndex = tools.findInTable(frameDurations, currentMotifData.duration)
 
