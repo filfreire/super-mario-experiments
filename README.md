@@ -8,7 +8,7 @@ metaheuristics experiments on super mario bros
 
 - Install [FCEUX](https://github.com/TASEmulators/fceux) (tested with win32 version)
 - Load Rom (e.g. SMB USA rom)
-- Try to run one of the example-scripts on fceux, alternatively run `./example-run.ps1` powershell script.
+- Try to run one of the `scripts` on fceux, alternatively run `./generate-initial-solution.ps1` powershell script.
 
 ### Extra setup steps
 
