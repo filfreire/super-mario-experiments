@@ -1,6 +1,0 @@
-metaheuristics todo:
-- run a save state + lua script to keep it running
-- write something to a text file when running lua script (useful later to take measurements)
-- read from a text file (to interepret solutions generated perhaps by python)
-- trigger the "run emulator" from the python script and wait for a given "keyword" to stop execution
-- create the genetic algorithm initial example implementation
