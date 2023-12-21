@@ -1,0 +1,2 @@
+solutions1.txt
+    Frames elapsed: 2550 - Aprox. time (seconds): 42.5
