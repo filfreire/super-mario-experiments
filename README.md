@@ -1,6 +1,6 @@
 # super-mario-experiments
 
-metaheuristics experiments on super mario bros
+metaheuristics experiments on super mario bros.
 
 ## Setup
 
@@ -9,9 +9,12 @@ metaheuristics experiments on super mario bros
 - Install [FCEUX](https://github.com/TASEmulators/fceux) (tested with win32 version)
 - Load Rom (e.g. SMB NTSC USA rom)
 - Try to run one of the `scripts` on fceux, alternatively run
-  - `.\generate-initial-solution.ps1` powershell for generating a feasible starting solution
+  - `.\generate-initial-solution.ps1` for generating a feasible starting solution
   - `.\playback-solution.ps1 .\data\solutions1.txt` to try out a saved solution
-  - `.\mario-genetic-1.ps1 .\data\solutions1.txt` to try out genetic algorithm with a saved solution as the initial one
+  - `.\mario-genetic-1.ps1 <initial-feasible-solution.txt>` to try out population based algorithm with a saved solution as the initial one
+  - `.\mario-genetic-mutation-only.ps1 <initial-feasible-solution.txt>` to try out custom evolutionary algorithm with a saved solution as the initial one
+  - `.\generate-initial-solution-RW.ps1 <randomSeed>`  for generating a feasible starting solution using random walk with a given random seed
+  - `.\run-random-walk-experiment.ps1` to run a full random walk experiment of `.\generate-initial-solution-RW.ps1` be sure to edit the number of random seeds according to the number of threads of your CPU
 
 ### Extra setup steps
 
@@ -29,7 +32,7 @@ metaheuristics experiments on super mario bros
 - <https://www.youtube.com/watch?v=U7RzoIEoSMY>
 - <https://www.youtube.com/watch?v=Khu9BB2g4Ks>
 
-## Other sources
+## Other extra sources
 
 > Leane, M., & Noman, N. (2017, November). An evolutionary metaheuristic algorithm to optimise solutions to NES games. In 2017 21st Asia Pacific Symposium on Intelligent and Evolutionary Systems (IES) (pp. 19-24). IEEE.
 >

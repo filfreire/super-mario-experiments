@@ -1,8 +1,7 @@
 local tools = require("tools")
 local m = require("motifs")
 
-emu.speedmode("maximum")
-
+emu.speedmode("normal")
 
 -- TODO: make this env variable
 local goalXPosition = 3161 -- win position SMB Level 1-1

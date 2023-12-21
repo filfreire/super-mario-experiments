@@ -47,3 +47,6 @@ luac.out
 !data/solutions1.txt
 
 data/*.txt
+
+data-analysis/.ipynb_checkpoints
+data-analysis/.env
