@@ -6,7 +6,7 @@ emu.speedmode("maximum")
 
 -- TODO: make these proper env variables
 local RANDOM_SEED = 42
-local RANDOM_MUTATION_COUNT = 30
+local RANDOM_MUTATION_COUNT = 100
 math.randomseed(RANDOM_SEED)
 local segmentGap = 1
 local bestTimerYet = 0
@@ -74,8 +74,6 @@ function mutateSolution(solution, heuristicValues, segmentToMutate)
                 motif = randomMotif,
                 duration = randomDuration
             })
-            emu.print("Mutated motif " .. i .. " of " .. #solution .. " - " .. motifData.motif .. " - " ..
-                          motifData.duration .. " to " .. randomMotif .. " - " .. randomDuration)
         else
             table.insert(mutatedSolution, motifData)
         end
@@ -154,7 +152,7 @@ local feasible_count = 0
 local population = {}
 
 -- initial population of 10000 with initialSolution
-for i = 1, 10000 do
+for i = 1, 1000 do
     table.insert(population, tools.cloneSolution(initialSolution))
 end
 
@@ -167,9 +165,12 @@ repeat
         local segments = findSegments(lowHeuristicMotifs, segmentGap)
         local mutatedSolutions = {}
         for i, segment in ipairs(segments) do
-            local mutatedSolution = mutateSolution(solution, heuristicValues, segment)
-            if mutatedSolution ~= nil then
-                table.insert(mutatedSolutions, mutatedSolution)
+            -- do 100 attempts at a different mutation of same segment
+            for i = 1, RANDOM_MUTATION_COUNT do
+                local mutatedSolution = mutateSolution(solution, heuristicValues, segment)
+                if mutatedSolution ~= nil then
+                    table.insert(mutatedSolutions, mutatedSolution)
+                end
             end
         end
 
