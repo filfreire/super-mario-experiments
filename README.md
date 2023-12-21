@@ -7,10 +7,11 @@ metaheuristics experiments on super mario bros
 > Note: tested using Windows 10 Pro 22H2
 
 - Install [FCEUX](https://github.com/TASEmulators/fceux) (tested with win32 version)
-- Load Rom (e.g. SMB USA rom)
+- Load Rom (e.g. SMB NTSC USA rom)
 - Try to run one of the `scripts` on fceux, alternatively run
   - `.\generate-initial-solution.ps1` powershell for generating a feasible starting solution
   - `.\playback-solution.ps1 .\data\solutions1.txt` to try out a saved solution
+  - `.\mario-genetic-1.ps1 .\data\solutions1.txt` to try out genetic algorithm with a saved solution as the initial one
 
 ### Extra setup steps
 
@@ -25,6 +26,8 @@ metaheuristics experiments on super mario bros
 - <https://github.com/NesHacker/PlatformerMovement/>
 - <https://www.youtube.com/watch?v=ZuKIUjw_tNU>
 - <https://github.com/mam91/Neat-Genetic-Mario>
+- <https://www.youtube.com/watch?v=U7RzoIEoSMY>
+- <https://www.youtube.com/watch?v=Khu9BB2g4Ks>
 
 ## Other sources
 

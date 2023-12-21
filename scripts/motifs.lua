@@ -13,6 +13,7 @@ local motifs = {}
 
 local motifKeys = {"right", "rightA", "rightB", "rightAB", "left", "leftA", "leftB", "leftAB"}
 
+local frameDurations = {10, 20, 25, 30}
 
 
 motifs["right"] = {
@@ -89,6 +90,7 @@ motifs["leftAB"] = {
 
 return {
     motifs = motifs,
-    motifKeys = motifKeys
+    motifKeys = motifKeys,
+    frameDurations = frameDurations
 }
 

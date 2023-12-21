@@ -7,7 +7,6 @@ local farthestPosition = 0
 local bestSolutionYet = nil
 local finalSolution = nil
 local m = require("motifs")
-local frameDurations = {10, 20, 25, 30}
 
 -- TODO: make this a env variable / parameter
 local n = 5 -- Starting length of the solution
@@ -24,7 +23,7 @@ function createSolution(length)
     for i = 1, length do
         table.insert(solution, {
             motif = m.motifKeys[1],
-            duration = frameDurations[1]
+            duration = m.frameDurations[1]
         })
     end
     return solution
@@ -53,20 +52,20 @@ repeat
         if failIndex then
             local currentMotifData = solution[failIndex]
             local currentMotifIndex = tools.findInTable(m.motifKeys, currentMotifData.motif)
-            local currentFrameDurationIndex = tools.findInTable(frameDurations, currentMotifData.duration)
+            local currentFrameDurationIndex = tools.findInTable(m.frameDurations, currentMotifData.duration)
 
             -- Cycle through motifs and frame durations before increasing length of solution
-            if currentFrameDurationIndex < #frameDurations then
-                currentMotifData.duration = frameDurations[currentFrameDurationIndex + 1]
+            if currentFrameDurationIndex < #m.frameDurations then
+                currentMotifData.duration = m.frameDurations[currentFrameDurationIndex + 1]
             else
-                currentMotifData.duration = frameDurations[1]
+                currentMotifData.duration = m.frameDurations[1]
                 currentMotifData.motif = m.motifKeys[(currentMotifIndex % #m.motifKeys) + 1]
             end
         else
             -- Handle the case when failIndex is nil, increase length of solution
             table.insert(solution, {
                 motif = m.motifKeys[1],
-                duration = frameDurations[1]
+                duration = m.frameDurations[1]
             })
             n = #solution
         end

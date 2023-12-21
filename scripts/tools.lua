@@ -146,7 +146,7 @@ function executeSolution(solution, goalXPosition, motifs)
         elseif lastPosition == currentPositionX then
             return "stuck", i -- Return stuck status and the index of the motif where Mario gets stuck
         elseif checkIfWinState(goalXPosition, currentPositionX) then
-            return "win", nil -- Return win status
+            return "win", i -- Return win status, and current motif that reached the goal, to catch redudant motifs
         end
         lastPosition = currentPositionX
     end
@@ -168,10 +168,17 @@ end
 function resetCurrentLevel()
     -- set memory 0x0772 to 0x00
     memory.writebyte(0x0772, 0x01)
-    -- advance 3*60 frames to wait for level to reset (3 secs)
-    for i = 1, 3 * 60 do
+    -- advance 30 frames to wait for level to reset (.5 secs)
+    for i = 1, 30 do
         emu.frameadvance()
     end
+end
+
+-- get game timer value, 0x07F8/A 	Digits of Game Timer (0100 0000 0000) in BCD Format.
+function getCurrentGameTimer()
+    local gameTimer = memory.readbyte(0x07F8) * 100 + memory.readbyte(0x07F9) * 10 + memory.readbyte(0x07FA)
+
+    return gameTimer
 end
 
 
@@ -187,5 +194,6 @@ return {
     checkIfFailState = checkIfFailState,
     checkIfWinState = checkIfWinState,
     parseSolutionString = parseSolutionString,
-    resetCurrentLevel = resetCurrentLevel
+    resetCurrentLevel = resetCurrentLevel,
+    getCurrentGameTimer = getCurrentGameTimer
 }
