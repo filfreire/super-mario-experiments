@@ -42,8 +42,7 @@ function appendSolutionToFile(solution, filename)
     end
     local lfs = require("lfs")
     local currentDirectory = lfs.currentdir()
-    local fullPath = currentDirectory .. "\\" .. fileName
-    print("The file path is: " .. fullPath)
+local fullPath = currentDirectory .. "\\" .. fileName
 
     local file = io.open(fileName, "a")
 
@@ -63,8 +62,7 @@ function appendStringToFile(someString, somefilename)
     end
     local lfs = require("lfs")
     local currentDirectory = lfs.currentdir()
-    local fullPath = currentDirectory .. "\\" .. somefilename
-    print("The file path is: " .. fullPath)
+local fullPath = currentDirectory .. "\\" .. somefilename
 
     local file = io.open(somefilename, "a")
 
@@ -83,8 +81,7 @@ function loadSolutionFromFile(filename)
     local lfs = require("lfs")
     local currentDirectory = lfs.currentdir()
 
-    local fullPath = currentDirectory .. "\\..\\" .. filename
-    print("The file path is: " .. fullPath)
+local fullPath = currentDirectory .. "\\..\\" .. filename
 
     local file = io.open(fullPath, "r")
 
