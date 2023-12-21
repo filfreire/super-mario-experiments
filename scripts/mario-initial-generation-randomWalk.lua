@@ -56,7 +56,7 @@ repeat
             "..\\data\\solutions-bestSolutionYet-randseed-" .. randomSeed .. ".txt")
     end
 
-    tools.appendStringToFile(iteration .. "," .. bestSolutionYet, "..\\data\\random-walk" .. randomSeed .. ".txt")
+    tools.appendStringToFile(iteration .. "," .. farthestPosition, "..\\data\\random-walk" .. randomSeed .. ".txt")
     iteration = iteration + 1
 
     if status == "fail" or status == "stuck" then

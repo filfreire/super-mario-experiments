@@ -44,3 +44,6 @@ luac.out
 *.hex
 
 !data/random.txt
+!data/solutions1.txt
+
+data/*.txt
