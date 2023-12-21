@@ -36,11 +36,12 @@ function solutionToString(solution)
 end
 
 -- append solution to a file
-function appendSolutionToFile(solution)
+function appendSolutionToFile(solution, filename)
+    if filename == nil then
+        filename = "..\\data\\solutions.txt"
+    end
     local lfs = require("lfs")
     local currentDirectory = lfs.currentdir()
-
-    local fileName = "..\\data\\solutions.txt"
     local fullPath = currentDirectory .. "\\" .. fileName
     print("The file path is: " .. fullPath)
 
@@ -53,6 +54,28 @@ function appendSolutionToFile(solution)
         print("Unable to open or create the file.")
     end
 end
+
+
+-- append string to a file
+function appendStringToFile(someString, somefilename)
+    if somefilename == nil then
+        somefilename = "..\\data\\solutions.txt"
+    end
+    local lfs = require("lfs")
+    local currentDirectory = lfs.currentdir()
+    local fullPath = currentDirectory .. "\\" .. somefilename
+    print("The file path is: " .. fullPath)
+
+    local file = io.open(somefilename, "a")
+
+    if file then
+        file:write(someString .. "\n")
+        file:close()
+    else
+        print("Unable to open or create the file.")
+    end
+end
+
 
 -- load solution from a file
 
@@ -129,9 +152,7 @@ end
 function executeSolution(solution, goalXPosition, motifs)
     local lastPosition = getCurrentMarioPosition()
     for i, motifData in ipairs(solution) do
-
         executeMotif(motifs[motifData.motif], motifData.duration) -- Execute the motif with the specified duration
-
         local currentPositionX, currentPositionY = getCurrentMarioPosition()
 
         local failState, isFallIntoPit = checkIfFailState()
@@ -143,15 +164,14 @@ function executeSolution(solution, goalXPosition, motifs)
                 failingMotifIndex = i - 1 -- Return the previous motif if Mario is stuck dying with an enemy
             end
             return "fail", failingMotifIndex -- Return fail status and the index of the failing motif
-        elseif lastPosition == currentPositionX then
-            return "stuck", i -- Return stuck status and the index of the motif where Mario gets stuck
         elseif checkIfWinState(goalXPosition, currentPositionX) then
             return "win", i -- Return win status, and current motif that reached the goal, to catch redudant motifs
+        elseif lastPosition == currentPositionX then
+            return "stuck", i -- Return stuck status and the index of the motif where Mario gets stuck
         end
         lastPosition = currentPositionX
     end
     return "fail", nil -- Return fail status and nil as the index of the failing motif
-
 end
 
 -- Function to find the index of a key in a tabl
@@ -231,5 +251,6 @@ return {
     resetCurrentLevel = resetCurrentLevel,
     getCurrentGameTimer = getCurrentGameTimer,
     cloneSolution = cloneSolution,
-    calculateHeuristicScore = calculateHeuristicScore
+    calculateHeuristicScore = calculateHeuristicScore,
+    appendStringToFile = appendStringToFile
 }

@@ -33,8 +33,7 @@ end
 -- Main Cyclic generation algorithm
 local solution = createSolution(n) -- initialize solution with length n
 repeat
-    local failIndex = nil
-    status, failIndex = tools.executeSolution(solution, goalXPosition, m.motifs)
+    local status, failIndex = tools.executeSolution(solution, goalXPosition, m.motifs)
 
     local currentPositionX, currentPositionY = tools.getCurrentMarioPosition()
 
@@ -75,8 +74,6 @@ repeat
         finalSolution = solution
         break
     end
-
-
 until status == "win"
 
 -- At this point, finalSolution should be feasible

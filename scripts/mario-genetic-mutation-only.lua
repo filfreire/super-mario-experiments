@@ -4,12 +4,13 @@ local repair = require("repair-solution")
 
 emu.speedmode("maximum")
 
--- TODO: make this env variable
+-- TODO: make these proper env variables
 local RANDOM_SEED = 42
 local RANDOM_MUTATION_COUNT = 30
 math.randomseed(RANDOM_SEED)
 local segmentGap = 1
 local bestTimerYet = 0
+local FILENAME_TO_SAVE_SOLUTION = "..\\data\\solutions-mutation-only.txt"
 
 -- TODO: make this env variable
 local GOAL_POSITION = 3161 -- win position SMB Level 1-1
@@ -42,7 +43,6 @@ local function findSegments(numbers, gap)
     return segments
 end
 
-
 local solution = tools.loadSolutionFromFile(playbackFilename)
 emu.print("Solution loaded: " .. tools.solutionToString(solution) .. " - Length: " .. #solution .. " motifs")
 
@@ -74,6 +74,8 @@ function mutateSolution(solution, heuristicValues, segmentToMutate)
                 motif = randomMotif,
                 duration = randomDuration
             })
+            emu.print("Mutated motif " .. i .. " of " .. #solution .. " - " .. motifData.motif .. " - " ..
+                          motifData.duration .. " to " .. randomMotif .. " - " .. randomDuration)
         else
             table.insert(mutatedSolution, motifData)
         end
@@ -87,7 +89,7 @@ function mutateSolution(solution, heuristicValues, segmentToMutate)
             local mutatedHeuristicValue = evaluateMotif(motifData)
             if mutatedHeuristicValue > originalHeuristicValue then
                 -- If the unique mutation results in a faster heuristic at this segment, we consider solution mutation successful (even if its not feasible yet)
-                --emu.print("Mutated solution with higher heuristic score! ")
+                -- emu.print("Mutated solution with higher heuristic score! ")
                 return mutatedSolution
             end
         end
@@ -151,17 +153,16 @@ emu.print("Low heuristic motifs: " .. table.concat(lowHeuristicMotifs, ", ") .. 
 local feasible_count = 0
 local population = {}
 
--- initial population of 100 with initialSolution
-for i = 1, 100 do
+-- initial population of 10000 with initialSolution
+for i = 1, 10000 do
     table.insert(population, tools.cloneSolution(initialSolution))
 end
-
 
 local feasible_count = 0
 
 repeat
     for i, solution in ipairs(population) do
-        emu.print("Trying to mutate+crossover+repair solution " .. i .. " of " .. #population)
+        emu.print("Trying to create feasible solution " .. i .. " of " .. #population)
         -- MUTATION: for each segment create a mutation and store it in a list of mutated solutions
         local segments = findSegments(lowHeuristicMotifs, segmentGap)
         local mutatedSolutions = {}
@@ -172,23 +173,20 @@ repeat
             end
         end
 
-        -- CROSSOVER: mutatedSolutions with initial solution
-        local crossoverSolution = generateCrossover(solution, mutatedSolutions)
-        local feasibleCrossoverSolution, indexWhenDoneFeasible = repair.repairSolution(crossoverSolution, GOAL_POSITION, initialSave)
+        for i, mutatedSolution in ipairs(mutatedSolutions) do
+            savestate.load(initialSave)
+            local startFramecount = emu.framecount()
+            local status, indexWhenDone = tools.executeSolution(mutatedSolution, GOAL_POSITION, m.motifs)
+            local finishFramecount = emu.framecount()
+            if status == "win" then
+                feasible_count = feasible_count + 1
+                local timerstring = "+timer:" .. tools.getCurrentGameTimer()
+                local solutionstring = tools.solutionToString(mutatedSolution)
+                local indexstring = "+index:" .. indexWhenDone
+                local somestring = timerstring .. indexstring .. "|" .. solutionstring
 
-
-        savestate.load(initialSave)
-        local startFramecount = emu.framecount()
-        local status, indexWhenDone = tools.executeSolution(feasibleCrossoverSolution, GOAL_POSITION, m.motifs)
-        local finishFramecount = emu.framecount()
-        if status == "win" then
-            feasible_count = feasible_count + 1
-            emu.print("Win! completed on index: " .. indexWhenDone)
-            emu.print("Frames elapsed: " .. (finishFramecount - startFramecount) .. " - Aprox. time (seconds): " ..
-                        (finishFramecount - startFramecount) / 60)
-            if bestTimerYet < tools.getCurrentGameTimer() then
-                bestTimerYet = tools.getCurrentGameTimer()
-                emu.print("Best timer yet: " .. bestTimerYet)
+                emu.print(somestring)
+                tools.appendStringToFile(somestring, FILENAME_TO_SAVE_SOLUTION)
             end
         end
     end
