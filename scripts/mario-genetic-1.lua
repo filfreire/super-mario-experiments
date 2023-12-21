@@ -5,16 +5,22 @@ emu.speedmode("maximum")
 
 -- TODO: make this env variable
 local RANDOM_SEED = 42
+local RANDOM_MUTATION_COUNT = 30
 math.randomseed(RANDOM_SEED)
 local segmentGap = 1
 
-local bestTimerYet = 999
+local bestTimerYet = 0
+
 
 
 
 -- TODO: make this env variable
-local goalXPosition = 3161 -- win position SMB Level 1-1
-local thresholdHeuristicValue = 5 -- Define a threshold for low heuristic value
+local GOAL_POSITION = 3161 -- win position SMB Level 1-1
+local START_POSITION, _ = tools.getCurrentMarioPosition()
+
+emu.print("Start position X: " .. START_POSITION .. " - Goal position X: " .. GOAL_POSITION)
+
+local thresholdHeuristicValue = 20 -- Define a threshold for low heuristic value
 
 local playbackFilename = os.getenv("playbackFilename")
 if playbackFilename == nil then
@@ -47,29 +53,24 @@ tools.resetCurrentLevel()
 local initialSave = savestate.create(1)
 savestate.save(initialSave)
 
--- heuristic function - for now we check if this motif makes Mario closer to the objective
--- in the original paper they seem to use some sort of conversion of this from 0 to 100
+-- heuristic function - check heuristic score before and after motif, return difference
 local function evaluateMotif(motifData)
-    local initialPositionX, initialPositionY = tools.getCurrentMarioPosition()
+    local initialPositionX, _ = tools.getCurrentMarioPosition()
     tools.executeMotif(m.motifs[motifData.motif], motifData.duration)
-    local finalPositionX, finalPositionY = tools.getCurrentMarioPosition()
-    return finalPositionX - initialPositionX
+    local finalPositionX, _ = tools.getCurrentMarioPosition()
+    local initialHeuristicScore = tools.calculateHeuristicScore(START_POSITION, GOAL_POSITION, initialPositionX)
+    local currentHeuristicScore = tools.calculateHeuristicScore(START_POSITION, GOAL_POSITION, finalPositionX)
+    local difference = (currentHeuristicScore - initialHeuristicScore)
+    -- emu.print("difference: " .. difference * 100) -- for now multiplying by 100 to make it easier to spot large diffs
+    return difference * 100
 end
 
-local function cloneSolution(solution)
-    local solutionCopy = {}
-    for i, motifData in ipairs(solution) do
-        solutionCopy[i] = motifData
-    end
-    return solutionCopy
-end
-
-local function mutateSolution(solution, lowHeuristicMotifsIndexes)
+function mutateSolution(solution, heuristicValues, segmentToMutate)
     local mutatedSolution = {}
     -- for each motif, if they are motif with low heuristic value, mutate them by picking a random motif and duration, otherwise keep them as they are and store into a new list
     for i, motifData in ipairs(solution) do
 
-        if tools.findInTable(lowHeuristicMotifsIndexes, i) then
+        if tools.findInTable(segmentToMutate, i) then
             local randomMotif = m.motifKeys[math.random(#m.motifKeys)]
             local randomDuration = m.frameDurations[math.random(#m.frameDurations)]
             table.insert(mutatedSolution, {
@@ -81,23 +82,39 @@ local function mutateSolution(solution, lowHeuristicMotifsIndexes)
         end
     end
 
-    return mutatedSolution
+    savestate.load(initialSave)
+
+    -- check if mutated solution has better heuristic value than original solution for the mutated motifs
+    for i, motifData in ipairs(mutatedSolution) do
+        if tools.findInTable(segmentToMutate, i) then
+            local originalHeuristicValue = heuristicValues[i]
+            local mutatedHeuristicValue = evaluateMotif(motifData)
+            if mutatedHeuristicValue > originalHeuristicValue then
+                -- If the unique mutation results in a faster heuristic at this segment, we consider solution mutation successful (even if its not feasible yet)
+                emu.print("Mutated solution with higher heuristic score! ")
+                return mutatedSolution
+            end
+        end
+    end
+
+    return nil
 end
 
 -- Copy the solution
-local solutionCopy = cloneSolution(solution)
+local initialSolution = tools.cloneSolution(solution)
 
-local startFramecount = emu.framecount()
+
 -- Store heuristic values
 local heuristicValues = {}
-for i, motifData in ipairs(solutionCopy) do
+local startFramecount = emu.framecount()
+for i, motifData in ipairs(initialSolution) do
     heuristicValues[i] = evaluateMotif(motifData)
 end
 local finishFramecount = emu.framecount()
 emu.print("Frames elapsed: " .. (finishFramecount - startFramecount) .. " - Aprox. time (seconds): " ..
               (finishFramecount - startFramecount) / 60)
 
-if bestTimerYet > tools.getCurrentGameTimer() then
+if bestTimerYet < tools.getCurrentGameTimer() then
     bestTimerYet = tools.getCurrentGameTimer()
     emu.print("Best timer yet: " .. bestTimerYet)
 end
@@ -110,59 +127,47 @@ for motif, value in pairs(heuristicValues) do
     end
 end
 
-emu.print("Low heuristic motifs: " .. table.concat(lowHeuristicMotifs, ", "))
+emu.print("Low heuristic motifs: " .. table.concat(lowHeuristicMotifs, ", ") .. " - Length: " .. #lowHeuristicMotifs)
 
 
 -- Finding the segments
 local segments = findSegments(lowHeuristicMotifs, segmentGap)
 
-local success_count = 0
 
+local feasible_count = 0
+-- for each segment create a mutation and store it in a list of mutated solutions
+local mutatedSolutions = {}
 for i, segment in ipairs(segments) do
-    print("Segment " .. i .. ": " .. table.concat(segment, ", "))
-     for j = 1, 30 do
-        savestate.load(initialSave)
-        local startFramecount = emu.framecount()
-        local mutatedSolution = mutateSolution(solutionCopy, segment)
-        status, indexWhenDone = tools.executeSolution(mutatedSolution, goalXPosition, m.motifs)
-        local finishFramecount = emu.framecount()
-
-        --emu.print("mutated " .. i ..",".. j .. " - Status: " .. status)
-        if status == "win" then
-            success_count = success_count + 1
-            emu.print("mutated " .. i ..",".. j .. " - index when done: " .. indexWhenDone)
-            emu.print("Frames elapsed: " .. (finishFramecount - startFramecount) .. " - Aprox. time (seconds): " ..
-              (finishFramecount - startFramecount) / 60)
-            if bestTimerYet > tools.getCurrentGameTimer() then
-                bestTimerYet = tools.getCurrentGameTimer()
-                emu.print("Best timer yet: " .. bestTimerYet)
-            end
+    print("Generating ".. RANDOM_MUTATION_COUNT .." random mutations for segment " .. i .. ": " .. table.concat(segment, ", "))
+    for j = 1, RANDOM_MUTATION_COUNT do
+        local mutatedSolution = mutateSolution(initialSolution, heuristicValues, segment)
+        if mutatedSolution == nil then
+            emu.print("Mutated solution is nil, skipping...")
+        else
+            table.insert(mutatedSolutions, mutatedSolution)
         end
-     end
+    end
 end
 
+for i, mutatedSolution in ipairs(mutatedSolutions) do
+    savestate.load(initialSave)
+    local startFramecount = emu.framecount()
+    status, indexWhenDone = tools.executeSolution(mutatedSolution, GOAL_POSITION, m.motifs)
+    local finishFramecount = emu.framecount()
+    if status == "win" then
+        feasible_count = feasible_count + 1
+        emu.print("mutatedSolution " .. i .." - completed on index: " .. indexWhenDone)
+        emu.print("Frames elapsed: " .. (finishFramecount - startFramecount) .. " - Aprox. time (seconds): " ..
+          (finishFramecount - startFramecount) / 60)
+        if bestTimerYet < tools.getCurrentGameTimer() then
+            bestTimerYet = tools.getCurrentGameTimer()
+            emu.print("Best timer yet: " .. bestTimerYet)
+        end
+    end
+end
 
--- try 1000 mutated solutions
--- local success_count = 0
--- local fail_count = 0
--- local stuck_count = 0
-
--- for i = 1, 1000 do
---     savestate.load(initialSave)
---     local mutatedSolution = mutateSolution(solutionCopy, lowHeuristicMotifs)
---     status, failIndex = tools.executeSolution(mutatedSolution, goalXPosition, m.motifs)
---     if status == "win" then
---         success_count = success_count + 1
---     elseif status == "fail" then
---         fail_count = fail_count + 1
---     elseif status == "stuck" then
---         stuck_count = stuck_count + 1
---     end
---     emu.print("Mutated solution " .. i .. " - Status: " .. status)
--- end
-
--- emu.print("Success count: " .. success_count .. " - Fail count: " .. fail_count .. " - Stuck count: " .. stuck_count)
-
+emu.print("Feasible count: " .. feasible_count .. " - Total mutated solutions: " .. #mutatedSolutions)
+emu.print("done...")
 emu.pause()
 
 return

@@ -182,6 +182,40 @@ function getCurrentGameTimer()
 end
 
 
+-- Function to clone a solution
+-- TODO: not sure if this is needed
+function cloneSolution(solution)
+    local newSolution = {}
+    for i, motifData in ipairs(solution) do
+        newSolution[i] = motifData
+    end
+    return newSolution
+end
+
+
+function calculateHeuristicScore(start, finish, current)
+    -- Ensure that start is not equal to finish to avoid division by zero
+    if start == finish then
+        return 0
+    end
+
+    -- Calculate the relative position of current
+    local relativePosition = (current - start) / (finish - start)
+
+    -- Scale to 0 - 100 range
+    local score = relativePosition * 100
+
+    -- Clamp the score to the 0-100 range
+    if score < 0 then
+        return 0
+    elseif score > 100 then
+        return 100
+    else
+        return score
+    end
+end
+
+
 return {
     debugMarioPosition = debugMarioPosition,
     solutionToString = solutionToString,
@@ -195,5 +229,7 @@ return {
     checkIfWinState = checkIfWinState,
     parseSolutionString = parseSolutionString,
     resetCurrentLevel = resetCurrentLevel,
-    getCurrentGameTimer = getCurrentGameTimer
+    getCurrentGameTimer = getCurrentGameTimer,
+    cloneSolution = cloneSolution,
+    calculateHeuristicScore = calculateHeuristicScore
 }
