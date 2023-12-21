@@ -6,7 +6,10 @@ emu.speedmode("maximum")
 
 -- TODO: make this env variable
 local RANDOM_SEED = 42
-local RANDOM_MUTATION_COUNT = 30
+local RANDOM_MUTATION_COUNT = 1
+local MAX_REPAIR_ATTEMPTS = 10
+local FILENAME_TO_SAVE_SOLUTION = "..\\data\\solutions-genetic-1.txt"
+
 math.randomseed(RANDOM_SEED)
 local segmentGap = 1
 local bestTimerYet = 0
@@ -174,8 +177,8 @@ repeat
 
         -- CROSSOVER: mutatedSolutions with initial solution
         local crossoverSolution = generateCrossover(solution, mutatedSolutions)
-        local feasibleCrossoverSolution, indexWhenDoneFeasible = repair.repairSolution(crossoverSolution, GOAL_POSITION, initialSave)
-
+        -- Repair the crossover to handle infeasible solutions
+        local feasibleCrossoverSolution, indexWhenDoneFeasible = repair.repairSolution(crossoverSolution, GOAL_POSITION, initialSave, MAX_REPAIR_ATTEMPTS)
 
         savestate.load(initialSave)
         local startFramecount = emu.framecount()
@@ -183,13 +186,14 @@ repeat
         local finishFramecount = emu.framecount()
         if status == "win" then
             feasible_count = feasible_count + 1
-            emu.print("Win! completed on index: " .. indexWhenDone)
-            emu.print("Frames elapsed: " .. (finishFramecount - startFramecount) .. " - Aprox. time (seconds): " ..
-                        (finishFramecount - startFramecount) / 60)
-            if bestTimerYet < tools.getCurrentGameTimer() then
-                bestTimerYet = tools.getCurrentGameTimer()
-                emu.print("Best timer yet: " .. bestTimerYet)
-            end
+            local timerstring = "+timer:" .. tools.getCurrentGameTimer()
+            local solutionstring = tools.solutionToString(mutatedSolution)
+            local indexstring = "+index:" .. indexWhenDone
+            local somestring = timerstring .. indexstring .. "|" .. solutionstring
+
+            emu.print(somestring)
+            tools.appendStringToFile(somestring, FILENAME_TO_SAVE_SOLUTION)
+
         end
     end
     emu.print("Feasible solutions: " .. feasible_count)

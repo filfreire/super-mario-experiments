@@ -6,7 +6,8 @@ emu.speedmode("maximum")
 
 -- TODO: make these proper env variables
 local RANDOM_SEED = 42
-local RANDOM_MUTATION_COUNT = 100
+local RANDOM_MUTATION_COUNT = 1
+
 math.randomseed(RANDOM_SEED)
 local segmentGap = 1
 local bestTimerYet = 0
@@ -152,7 +153,7 @@ local feasible_count = 0
 local population = {}
 
 -- initial population of 10000 with initialSolution
-for i = 1, 1000 do
+for i = 1, 10 do
     table.insert(population, tools.cloneSolution(initialSolution))
 end
 
