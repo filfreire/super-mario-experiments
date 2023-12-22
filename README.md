@@ -2,6 +2,8 @@
 
 metaheuristics experiments on super mario bros.
 
+- Read the report [here](https://github.com/filfreire/super-mario-experiments/blob/main/report.pdf).
+
 ## Setup
 
 > Note: tested using Windows 10 Pro 22H2
